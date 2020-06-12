@@ -15,7 +15,8 @@ using System.Timers;
 namespace MultiSenseCrown
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// MultiSenseCrown by Marius Dima 
+    /// https://www.hackster.io/dasdata/multisensecrown-e0daf9
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -28,6 +29,7 @@ namespace MultiSenseCrown
         private static int intervalRead = 1000;
         private DispatcherTimer dispatcherTimer;
 
+        // change this if you have other dasdata.co account 
         private string _domain = "https://dasdata.co/";
         private string _dasToken = "&das=cv+L1FGsSVaOptLc/yk4zAq367n5yqFqP6X4CbAqoNRv4a27VVX9RZB2jllGPur0GHDpQaG8C9UnU75NR7lWZw==";
 
