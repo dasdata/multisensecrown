@@ -39,7 +39,7 @@ namespace MultiSenseCrown
             InitializeComponent();
 
             // get the latest   
-            cmdGetData("latest", "0", "30"); 
+            cmdGetData("latest", "0", "100"); 
             // read every 3 seconds 
             dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
@@ -52,7 +52,7 @@ namespace MultiSenseCrown
             string format = "dd.MM.yyyy";
             string selectedDate = timestamp.ToString(format);
             lblDateTimeNow.Content = selectedDate; 
-            cmdGetData("latest", "0", "30");
+            cmdGetData("latest", "0", "100");
         } 
 
         // get data and bind components
@@ -128,7 +128,17 @@ namespace MultiSenseCrown
                         {
                             if (i == dataTable.Rows.Count-1)
                             {
-                                cpbBodyTemp.Progress = Convert.ToDouble(row[column].ToString());
+                                double tempVal = Convert.ToDouble(row[column].ToString());
+                                cpbBodyTemp.Progress = Convert.ToDouble(tempVal);
+
+                                if (tempVal > 37.8)
+                                {
+                                    lblTemperature.Content = "High temperature";
+                                }
+                                else {
+                                    lblTemperature.Content = "Normal temperature";
+                                }
+                   
                                 // latestTemp = Convert.ToDouble(row[column].ToString()); 
                             }
                             BodyData.Add(new BodyTemp() { Timestamp = timestamp, TempVal = Convert.ToDouble(row[column].ToString()) });
@@ -137,8 +147,19 @@ namespace MultiSenseCrown
                         if (column.ColumnName == "OxygenSaturation")
                         {
                             if (i == dataTable.Rows.Count -1)
-                            {
-                                cpbBodyOxygen.Progress = Convert.ToDouble(row[column].ToString());
+                            { 
+                                double oxyVal = Convert.ToDouble(row[column].ToString());
+                                cpbBodyOxygen.Progress = Convert.ToDouble(oxyVal);
+
+                                if (oxyVal > 93)
+                                {
+                                    lblSO2.Content = "Normal Oxygen";
+                                }
+                                else
+                                {
+                                    lblSO2.Content = "Low Oxygen";
+                                }
+
                             }
                             OxyData.Add(new OxygenSaturation() { Timestamp = timestamp, OxygenVal = Convert.ToDouble(row[column].ToString()) });
                         }
@@ -147,7 +168,21 @@ namespace MultiSenseCrown
                         {
                             if (i == dataTable.Rows.Count-1)
                             {
-                                cpbBodyPulse.Progress = Convert.ToDouble(row[column].ToString());
+                                double pulseVal = Convert.ToDouble(row[column].ToString()); 
+                                cpbBodyPulse.Progress = Convert.ToDouble(pulseVal);
+
+                                if (pulseVal > 160)
+                                {
+                                    lblPulse.Content = "High Pulse";
+                                }
+                                else if (pulseVal < 40)
+                                {
+                                    lblPulse.Content = "Low Pulse";
+                                }
+                                else {
+                                    lblPulse.Content = "Normal Pulse";
+                                }
+                              
                             }
                             HeartData.Add(new BodyPulse() { Timestamp = timestamp, PulseVal = Convert.ToDouble(row[column].ToString()) });
                         }
@@ -222,10 +257,19 @@ namespace MultiSenseCrown
             lblDateTimeNow.Content = selectedDate;
 
             imgHuman.Opacity = 1;
-            cmdGetData("interval", selectedDate, selectedDate);
+            cmdGetData("interval", selectedDate, selectedDate);  
 
-            // stop the 3 seconds counter as well 
-            dispatcherTimer.Stop();
+           string TodayDate = DateTime.Now.ToString(format);
+
+            // stop the 3 seconds counter  
+            dispatcherTimer.Stop(); 
+
+            if (TodayDate == selectedDate)
+            { 
+                // restart the 3 seconds counter  
+                cmdGetData("latest", "0", "100");
+                dispatcherTimer.Start();
+            } 
 
         }
     }
